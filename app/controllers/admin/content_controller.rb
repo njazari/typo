@@ -22,12 +22,24 @@ class Admin::ContentController < Admin::BaseController
       @article = Article.new(params[:article])
     end
   end
+  
+  def merge_with 
+    if not params[:merge_with].nil? and Article.exists?(params[:merge_with]) and params[:id] != params[:merge_with]
+      puts "MERGE IN"
+      art1 = Article.find(params[:id])
+      art2 = Article.find(params[:merge_with])
+      art1.merge(art2)
+    end
+    redirect_to :action => 'index'
+  end
 
   def new
+    @new = true
     new_or_edit
   end
 
   def edit
+    @new = false
     @article = Article.find(params[:id])
     unless @article.access_by? current_user
       redirect_to :action => 'index'

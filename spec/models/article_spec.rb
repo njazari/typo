@@ -26,6 +26,20 @@ describe Article do
     assert_equal [:body, :extended], a.content_fields
   end
 
+  describe "merge" do
+    before :each do
+      art1 = Article.create(:title => 'title1', :body => 'body1', :id => 99)
+      art2 = Article.create(:title => 'title2', :body => 'body2', :id => 100)
+      art1.merge(100)
+    end
+    it "merges the bodies" do
+      expect(Article.find(99).body).to eq "body1body2"
+    end
+    it "chooses one title" do 
+      expect(Article.find(99).title).to eq "title1"
+    end
+  end
+
   describe "#permalink_url" do
     describe "with hostname" do
       subject { Article.new(:permalink => 'article-3', :published_at => Time.new(2004, 6, 1)).permalink_url(anchor=nil, only_path=false) }
