@@ -12,6 +12,7 @@ class Admin::ContentController < Admin::BaseController
   end
 
   def index
+    @user = current_user.name
     @search = params[:search] ? params[:search] : {}
     
     @articles = Article.search_with_pagination(@search, {:page => params[:page], :per_page => this_blog.admin_display_elements})
@@ -24,8 +25,8 @@ class Admin::ContentController < Admin::BaseController
   end
   
   def merge_with 
-    if not params[:merge_with].nil? and Article.exists?(params[:merge_with]) and params[:id] != params[:merge_with]
-      puts "MERGE IN"
+    @user = current_user.name
+    if not params[:merge_with].nil? and Article.exists?(params[:merge_with]) and params[:id] != params[:merge_with] and @user == 'admin'
       art1 = Article.find(params[:id])
       art2 = Article.find(params[:merge_with])
       art1.merge(art2)
@@ -35,11 +36,13 @@ class Admin::ContentController < Admin::BaseController
 
   def new
     @new = true
+    @user = current_user.name
     new_or_edit
   end
 
   def edit
     @new = false
+    @user = current_user.name
     @article = Article.find(params[:id])
     unless @article.access_by? current_user
       redirect_to :action => 'index'
