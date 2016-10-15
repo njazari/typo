@@ -67,7 +67,7 @@ class Article < Content
       self.body = self.body + art2.body
       self.comments = self.comments + art2.comments
       self.save
-      art2.destroy
+      art2.delete
     end
   end
 
